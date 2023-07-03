@@ -12,18 +12,22 @@ router.get("/", ctrl.getContacts);
 
 router.get("/:id", isValidId, ctrl.getContactById);
 
-router.post("/", validateBody(schemas.addSchema), ctrl.addNewContact);
+router.post(
+  "/",
+  validateBody(schemas.addSchema, `missing fields`),
+  ctrl.addNewContact
+);
 
 router.put(
   "/:id",
   isValidId,
-  validateBody(schemas.addSchema),
+  validateBody(schemas.addSchema, `missing fields`),
   ctrl.getContactById
 );
 
 router.patch(
   "/:id/favorite",
-  validateBody(schemas.updateFavoriteSchema),
+  validateBody(schemas.updateFavoriteSchema, `missing field favorite`),
   ctrl.updateFavorite
 );
 
