@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 const request = require("supertest");
+
 require("dotenv").config();
 
 const app = require("../app");
-const { User } = require("../models/user");
 
 const { DB_HOST, PORT } = process.env;
+
+const loginUser = {
+  email: "test123@gmail.com",
+  password: "123456",
+};
 
 describe("", () => {
   let server;
@@ -16,26 +21,21 @@ describe("", () => {
     mongoose.connect(DB_HOST).then(() => done());
   });
 
-  test("test login route", async () => {
-    const newUser = {
-      email: "test123@gmail.com",
-      password: "123456",
-      subscroption: "starter",
-      avatarURL: "avatars\\64b1858bbe7fe77c18bd5ea5_avatar.jpg",
-    };
-
-    const user = await User.create(newUser);
-
-    const loginUser = {
-      email: "test123@gmail.com",
-      password: "123456",
-    };
-
+  test("login returns 200 status", async () => {
     const response = await request(app).post("/users/login").send(loginUser);
     expect(response.statusCode).toBe(200);
-    const { body } = response;
-    expect(body.token).toByTruthy();
-    const { token } = await User.findById(user._id);
-    expect(body.token).toBe(token);
+  });
+  test("login returns token", async () => {
+    const response = await request(app).post("/users/login").send(loginUser);
+    expect(response.body.token).toBeDefined();
+  });
+  test("login returns object with 2 fields - email and subscription", async () => {
+    const response = await request(app).post("/users/login").send(loginUser);
+    expect(Object.keys(response.body.user).length).toBe(2);
+    expect(response.body.user).toBeDefined();
+    expect(response.body.user.email).toBe("test123@gmail.com");
+    expect(response.body.user.subscription).toBe("starter");
+    expect(typeof response.body.user.email).toBe("string");
+    expect(typeof response.body.user.subscription).toBe("string");
   });
 });
