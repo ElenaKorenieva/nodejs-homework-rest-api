@@ -12,7 +12,7 @@ const loginUser = {
   password: "123456",
 };
 
-describe("", () => {
+describe("test login controller", () => {
   let server;
   beforeAll(() => (server = app.listen(PORT)));
   afterAll(() => server.close());
