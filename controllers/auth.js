@@ -20,7 +20,7 @@ const register = async (req, res) => {
   }
 
   const hashPassword = await bcrypt.hash(password, 10);
-  const avatarURL = gravatar.url(email);
+  const avatarURL = gravatar.url(email, { s: "250" });
 
   const newUser = await User.create({
     ...req.body,
@@ -92,7 +92,7 @@ const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
 
-  const img = jimp.read(tempUpload);
+  const img = await jimp.read(tempUpload);
   await img.resize(250, 250);
   await img.writeAsync(tempUpload);
 
